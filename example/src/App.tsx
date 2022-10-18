@@ -1,31 +1,44 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-image-marker';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+import ImageMarker from 'react-native-image-marker';
 
+type MarkerBase = {
+  position: { top: number; left: number };
+  markerNumber: number;
+};
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [markers, setMarkers] = React.useState<MarkerBase[]>([
+    { markerNumber: 1, position: { top: 32, left: 20 } },
+  ]);
 
-  React.useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
+  const onAddMarker = (position: { top: number; left: number }) => {
+    setMarkers((prev) => [
+      ...prev,
+      { markerNumber: prev.length + 1, position },
+    ]);
+  };
 
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.box}>
+        <ImageMarker
+          src={require('../assets/sample-image.jpeg')}
+          markers={markers}
+          onAddMarker={onAddMarker}
+          selectedMarker={undefined}
+        />
+      </View>
+      <View style={styles.box} />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+    flex: 1,
   },
 });
